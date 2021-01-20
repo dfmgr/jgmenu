@@ -137,6 +137,10 @@ ensure_perms
 
 # Main progam
 
+if [ -d "$APPDIR" ]; then
+  execute "backupapp $APPDIR $APPNAME" "Backing up $APPDIR"
+fi
+
 if [ -d "$DOWNLOADED_TO/.git" ]; then
   execute \
     "git_update $DOWNLOADED_TO" \
@@ -156,21 +160,21 @@ failexitcode
 # Plugins
 
 if __am_i_online; then
-if [ "$PLUGNAMES" != "" ]; then
-  if [ -d "$PLUGDIR"/PLUREP/.git ]; then
-    execute \
-      "git_update $PLUGDIR/PLUGREP" \
-      "Updating plugin PLUGNAME"
-  else
-    execute \
-      "git_clone PLUGINREPO $PLUGDIR/PLUGREP" \
-      "Installing plugin PLUGREP"
+  if [ "$PLUGNAMES" != "" ]; then
+    if [ -d "$PLUGDIR"/PLUREP/.git ]; then
+      execute \
+        "git_update $PLUGDIR/PLUGREP" \
+        "Updating plugin PLUGNAME"
+    else
+      execute \
+        "git_clone PLUGINREPO $PLUGDIR/PLUGREP" \
+        "Installing plugin PLUGREP"
+    fi
   fi
-fi
-fi
 
-# exit on fail
-failexitcode
+  # exit on fail
+  failexitcode
+fi
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -178,7 +182,7 @@ failexitcode
 
 run_postinst() {
   dfmgr_run_post
-  cmd_exists jgmenu || [ -f "$DOWNLOADED_TO/build.sh" ] && sudoask && bash -c "$DOWNLOADED_TO/build.sh"
+  #cmd_exists jgmenu || [ -f "$DOWNLOADED_TO/build.sh" ] && bash -c "$DOWNLOADED_TO/build.sh"
 }
 
 execute \
