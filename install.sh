@@ -146,7 +146,7 @@ run_postinst() {
 }
 #
 execute "run_postinst" "Running post install scripts"
-cmd_exists jgmenu || printf_red "\t\tjgmenu is not installed: run $INSTDIR/build.sh\n"
+cmd_exists jgmenu || printf_red "jgmenu is not installed: run $INSTDIR/build.sh"
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # create version file
 dfmgr_install_version
