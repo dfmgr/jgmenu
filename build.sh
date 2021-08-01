@@ -19,7 +19,7 @@ SCRIPTDIR="$(dirname "${BASH_SOURCE[0]}")"
 if [ -f /usr/local/share/CasjaysDev/scripts/functions/app-installer.bash ]; then
   . /usr/local/share/CasjaysDev/scripts/functions/app-installer.bash
 else
-  curl -LSs https://github.com/dfmgr/installer/raw/master/functions/app-installer.bash -o /tmp/app-installer.bash || exit 1
+  curl -LSs https://github.com/dfmgr/installer/raw/main/functions/app-installer.bash -o /tmp/app-installer.bash || exit 1
   . /tmp/app-installer.bash
   rm_rf /tmp/app-installer.bash
 fi
