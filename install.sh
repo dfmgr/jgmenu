@@ -1,12 +1,5 @@
 #!/usr/bin/env bash
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-APPNAME="jgmenu"
-USER="${SUDO_USER:-${USER}}"
-HOME="${USER_HOME:-${HOME}}"
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-#set opts
-
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ##@Version       : 020820212259-git
 # @Author        : Jason Hempstead
 # @Contact       : jason@casjaysdev.com
@@ -19,6 +12,15 @@ HOME="${USER_HOME:-${HOME}}"
 # @TODO          :
 # @Other         :
 # @Resource      :
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+APPNAME="jgmenu"
+USER="${SUDO_USER:-${USER}}"
+HOME="${USER_HOME:-${HOME}}"
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+#set opts
+if [[ "$1" == "--debug" ]]; then shift 1 && set -xo pipefail && export SCRIPT_OPTS="--debug" && export _DEBUG="on"; fi
+trap 'exitCode=${exitCode:-$?};[ -n "$GEN_SCRIPT_REPLACE_ENV_TEMP_FILE" ] && [ -f "$GEN_SCRIPT_REPLACE_ENV_TEMP_FILE" ] && rm -Rf "$GEN_SCRIPT_REPLACE_ENV_TEMP_FILE" &>/dev/null' EXIT
+
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Import functions
 CASJAYSDEVDIR="${CASJAYSDEVDIR:-/usr/local/share/CasjaysDev/scripts}"
@@ -146,6 +148,14 @@ fi
 # run post install scripts
 run_postinst() {
   dfmgr_run_post
+  if ! cmd_exits "$APPNAME" && [[ -f "$INSTDIR/build.sh" ]]; then
+    if builtin cd "$PLUGDIR/source"; then
+      BUILD_SRC_DIR="$PLUGDIR/source"
+      BUILD_SRC_URL="https://github.com/johanmalm/jgmenu"
+      export BUILD_SRC_DIR BUILD_SRC_URL
+      eval "$INSTDIR/build.sh"
+    fi
+  fi
 }
 #
 execute "run_postinst" "Running post install scripts"
