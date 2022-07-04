@@ -1,26 +1,27 @@
 #!/usr/bin/env bash
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-##@Version       : 202207040852-git
+##@Version       : 202108010008-git
 # @Author        : Jason Hempstead
 # @Contact       : jason@casjaysdev.com
 # @License       : LICENSE.md
 # @ReadME        : build.sh --help
 # @Copyright     : Copyright: (c) 2022 Jason Hempstead, Casjays Developments
-# @Created       : Monday, Jul 04, 2022 08:52 EDT
+# @Created       : Monday, Jul 04, 2022 11:51 EDT
 # @File          : build.sh
-# @Description   : script to build dmenu
+# @Description   :
 # @TODO          :
 # @Other         :
 # @Resource      :
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-APPNAME="$(basename "$0" 2>/dev/null)"
-VERSION="202207040852-git"
+APPNAME="$(basename "$0")"
+VERSION="202108010008-git"
 USER="${SUDO_USER:-${USER}}"
 HOME="${USER_HOME:-${HOME}}"
 SRC_DIR="${BASH_SOURCE%/*}"
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Set bash options
 if [[ "$1" == "--debug" ]]; then shift 1 && set -xo pipefail && export SCRIPT_OPTS="--debug" && export _DEBUG="on"; fi
+trap 'exitCode=${exitCode:-$?};[ -n "$BUILD_SH_TEMP_FILE" ] && [ -f "$BUILD_SH_TEMP_FILE" ] && rm -Rf "$BUILD_SH_TEMP_FILE" &>/dev/null' EXIT
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -'
 # Set functions
@@ -33,7 +34,7 @@ printf_color() { echo -e "\t\t${1:-}${2:-}${NC}"; }
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Check for needed applications
-type -P bash &>/dev/null || { echo "Missing: bash" && exit 1; }
+type -P bash make &>/dev/null || { echo "Missing: bash" && exit 1; }
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Set variables
 NC="$(tput sgr0 2>/dev/null)"
@@ -102,19 +103,26 @@ while :; do
 done
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Additional variables
-if command -v jgmenu | grep -q '^/bin' || command -v jgmenu | grep -q '^/usr/bin'; then
+BUILD_NAME="jgmenu"
+BUILD_SRC_URL="${BUILD_SRC_URL:-https://github.com/johanmalm/jgmenu}"
+BUILD_SRC_DIR="${BUILD_SRC_DIR:-$HOME/.local/share/$BUILD_NAME/source}"
+BUILD_LOG_FILE="${BUILD_LOG_FILE:-/tmp/$BUILD_NAME_build.log}"
+if command -v "$BUILD_NAME" | grep -q '^/bin' || command -v "$BUILD_NAME" | grep -q '^/usr/bin'; then
   BUILD_DESTDIR="/usr"
 else
   BUILD_DESTDIR="${BUILD_DESTDIR:-/usr/local}"
 fi
-BUILD_SRC_DIR="${BUILD_SRC_DIR:-$HOME/.local/share/jgmenu/source}"
-BUILD_LOG_FILE="${BUILD_LOG_FILE:-/tmp/jgmenu_build.log}"
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Main application
 if [[ -d "$BUILD_SRC_DIR" ]]; then
   builtin cd "$BUILD_SRC_DIR" || exit 1
   if [[ -d ".git" ]]; then
     git reset --hard &>/dev/null && git pull -q &>/dev/null
+  elif [[ -n "$BUILD_SRC_URL" ]]; then
+    if ! git clone "$BUILD_SRC_URL" "$BUILD_SRC_DIR"; then
+      printf_color "1" "Failed to clone from $BUILD_SRC_URL"
+      exit 1
+    fi
   fi
   if [[ -f "configure" ]]; then
     ./configure --prefix="$BUILD_DESTDIR" --with-lx --with-pmenu
@@ -127,7 +135,7 @@ if [[ -d "$BUILD_SRC_DIR" ]]; then
       echo -e "$errors"
     else
       rm -Rf "$BUILD_LOG_FILE" &>/dev/null
-      printf_color "$GREEN" "Build of jgmenu has completed without error"
+      printf_color "$GREEN" "Build of $BUILD_NAME has completed without error"
     fi
   fi
 fi
