@@ -58,7 +58,7 @@ REPORAW="$REPO/raw/$REPO_BRANCH"
 APPVERSION="$(__appversion "$REPORAW/version.txt")"
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Setup plugins
-PLUGNAMES=""
+PLUGNAMES="source"
 PLUGDIR="${SHARE:-$HOME/.local/share}/$APPNAME"
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Call the dfmgr function
@@ -132,11 +132,11 @@ fi
 # Plugins
 if am_i_online; then
   if [ "$PLUGNAMES" != "" ]; then
-    if [ -d "$PLUGDIR"/PLUREP/.git ]; then
-      execute "git_update $PLUGDIR/PLUGREP" "Updating plugin PLUGNAME"
+    if [ -d "$PLUGDIR/source/.git" ]; then
+      execute "git_update $PLUGDIR/source" "Updating plugin source"
     else
       execute
-      "git_clone PLUGINREPO $PLUGDIR/PLUGREP" "Installing plugin PLUGREP"
+      "git_clone https://github.com/johanmalm/jgmenu $PLUGDIR/source" "Installing plugin source"
     fi
   fi
   # exit on fail
