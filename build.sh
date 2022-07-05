@@ -122,7 +122,7 @@ __packages() {
   if cmd_exists apt-get; then
     if cmd_exists pkmgr; then
       for pkg in libxml2-dev libmenu-cache-dev lxmenu-data libpango1.0-dev librsvg2-dev libcairo2-dev libxrandr-dev build-essential git cmake cmake-data pkg-config python3-sphinx libcairo2-dev libxcb1-dev libxcb-util0-dev libxcb-randr0-dev libxcb-composite0-dev python-xcbgen xcb-proto libxcb-image0-dev libxcb-ewmh-dev libxcb-icccm4-dev; do
-        pkmgr silent install "$pk"g &>/dev/null
+        pkmgr silent install "$pkg" &>/dev/null
         [[ $? = 0 ]] && __logr "Installed $pkg" || __logr "Warning: Failed to installed $pkg"
       done
     fi
