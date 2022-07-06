@@ -146,7 +146,7 @@ __packages() {
 }
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 __init() {
-  if [[ -z "$BUILD_FORCE" ]] && [[ -n "$(type -P "$BUILD_NAME")" ]]; then
+  if [[ -z "$BUILD_FORCE" ]] && [[ -f "$(builtin type -P "$BUILD_NAME" 2>/dev/null)" ]]; then
     __printf_color "$RED" "$BUILD_NAME is already installed" 1>&2
     __printf_color "$YELLOW" "run with --force to rebuild" 1>&2
     exit 0
@@ -255,7 +255,7 @@ if [[ -d "$BUILD_SRC_DIR" ]]; then
 fi
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # check
-if [[ "$exitCode" -eq 0 ]] && [[ -n "$(builtin type -P "$BUILD_NAME")" ]]; then
+if [[ "$exitCode" -eq 0 ]] && [[ -f "$(builtin type -P "$BUILD_NAME" 2>/dev/null)" ]]; then
   __printf_color "$GREEN" "Successfully installed $BUILD_NAME"
   exitCode=0
 else
