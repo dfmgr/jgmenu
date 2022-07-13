@@ -151,7 +151,13 @@ run_postinst() {
 #
 execute "run_postinst" "Running post install scripts"
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# run any build scripts
+# create version file
+dfmgr_install_version
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# run exit function
+run_exit
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# run any external scripts
 if ! cmd_exists "$APPNAME" && [[ -f "$INSTDIR/build.sh" ]]; then
   if builtin cd "$PLUGDIR/source"; then
     BUILD_SRC_DIR="$PLUGDIR/source"
@@ -160,11 +166,10 @@ if ! cmd_exists "$APPNAME" && [[ -f "$INSTDIR/build.sh" ]]; then
     eval "$INSTDIR/build.sh"
   fi
 fi
-cmd_exists jgmenu || printf_red "jgmenu is not installed: run $INSTDIR/build.sh"
+cmd_exists $APPNAME || printf_red "jgmenu is not installed: run $INSTDIR/build.sh"
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# create version file
-dfmgr_install_version
+# lets exit with code
+exit ${EXIT:-$exitCode}
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# exit
-run_exit
-# end
+# End application
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
