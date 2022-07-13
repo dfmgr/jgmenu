@@ -176,7 +176,7 @@ type -P bash &>/dev/null || { __printf_color "$RED" "Missing: bash" && exit 1; }
 type -P make &>/dev/null || { __printf_color "$RED" "Missing: make" && exit 1; }
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Set variables
-exitCode=10
+exitCode="0"
 NC="$(tput sgr0 2>/dev/null)"
 RESET="$(tput sgr0 2>/dev/null)"
 BLACK="\033[0;30m"
