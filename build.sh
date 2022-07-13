@@ -32,10 +32,10 @@ __make_build() {
   local exitCode_configure="0"
   if [[ -f "$BUILD_SRC_DIR/CMakeLists.txt" ]]; then
     mkdir -p "$BUILD_SRC_DIR/build" && cd "$BUILD_SRC_DIR/build" || exit 10
-    cmake .. 2>&1 | tee -a "$BUILD_LOG_FILE" &>/dev/null &&
-      make -j$(nproc) 2>&1 | tee -a "$BUILD_LOG_FILE" &>/dev/null &&
-      sudo make install 2>&1 | tee -a "$BUILD_LOG_FILE" &>/dev/null &&
-      exitCode_cmake="$?"
+    cmake .. 2>&1 | tee -a "$BUILD_LOG_FILE" &>/dev/null || exitCode+=1
+    make -j$(nproc) 2>&1 | tee -a "$BUILD_LOG_FILE" &>/dev/null || exitCode+=1
+    sudo make install 2>&1 | tee -a "$BUILD_LOG_FILE" &>/dev/null || exitCode+=1
+    exitCode_cmake="$?"
   elif [[ -f "$BUILD_SRC_DIR/configure" ]]; then
     __printf_color "$GREEN" "Running configure"
     make clean 2>&1 | tee -a "$BUILD_LOG_FILE" &>/dev/null
@@ -47,15 +47,15 @@ __make_build() {
     exitCode_configure="$?"
     if [[ -f "$BUILD_SRC_DIR/Makefile" ]]; then
       __printf_color "$GREEN" "Running make"
-      make -j$(nproc) 2>&1 | tee -a "$BUILD_LOG_FILE" &>/dev/null &&
-        sudo make install DESTDIR="$BUILD_DESTDIR" 2>&1 | tee -a "$BUILD_LOG_FILE" &>/dev/null
+      make -j$(nproc) 2>&1 | tee -a "$BUILD_LOG_FILE" &>/dev/null || exitCode+=1
+      sudo make install DESTDIR="$BUILD_DESTDIR" 2>&1 | tee -a "$BUILD_LOG_FILE" &>/dev/null
       exitCode_make="$?"
     fi
   elif [[ -f "$BUILD_SRC_DIR/Makefile" ]]; then
     __printf_color "$GREEN" "Running make"
     make clean 2>&1 | tee -a "$BUILD_LOG_FILE" &>/dev/null
-    make -j$(nproc) 2>&1 | tee -a "$BUILD_LOG_FILE" &>/dev/null &&
-      sudo make install DESTDIR="$BUILD_DESTDIR" 2>&1 | tee -a "$BUILD_LOG_FILE" &>/dev/null
+    make -j$(nproc) 2>&1 | tee -a "$BUILD_LOG_FILE" &>/dev/null || exitCode+=1
+    sudo make install DESTDIR="$BUILD_DESTDIR" 2>&1 | tee -a "$BUILD_LOG_FILE" &>/dev/null
     exitCode_make="$?"
   fi
   if [[ "$exitCode_configure" = 0 ]] && [[ "$exitCode_make" = 0 ]] && [[ "$exitCode_cmake" = 0 ]]; then
@@ -71,8 +71,8 @@ __make_build() {
 __run_git() {
   if [[ -d ".git" ]]; then
     __printf_color "$CYAN" "Updating the git repo"
-    git reset --hard 2>&1 | tee -a "$BUILD_LOG_FILE" &>/dev/null &&
-      git pull 2>&1 | tee -a "$BUILD_LOG_FILE" &>/dev/null
+    git reset --hard 2>&1 | tee -a "$BUILD_LOG_FILE" &>/dev/null || exitCode+=1
+    git pull 2>&1 | tee -a "$BUILD_LOG_FILE" &>/dev/null
     if [[ $? = 0 ]]; then
       return 0
     else
@@ -255,7 +255,7 @@ if [[ -d "$BUILD_SRC_DIR" ]]; then
 fi
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # check
-if [[ "$exitCode" -eq 0 ]] && [[ -f "$(builtin type -P "$BUILD_NAME" 2>/dev/null)" ]]; then
+if [[ -f "$(builtin type -P "$BUILD_NAME" 2>/dev/null)" ]]; then
   __printf_color "$GREEN" "Successfully installed $BUILD_NAME"
   exitCode=0
 else
