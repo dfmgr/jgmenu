@@ -101,13 +101,13 @@ __check_log() {
     warnings="$(grep -i 'warning: ' "$BUILD_LOG_FILE" || echo '')"
     if [[ -n "$warnings" ]]; then
       __printf_color "$RED" "The following warnings have occurred:"
-      echo -e "$warnings" | printf_readline "7"
+      echo -e "$warnings" | printf_readline
       __printf_color "$YELLOW" "Log file saved to $BUILD_LOG_FILE"
       exitCode=0
     fi
     if [[ -n "$errors" ]] || [[ "$exitCode" -ne 0 ]]; then
       __printf_color "$RED" "The following errors have occurred:"
-      echo -e "$errors" | printf_readline "7"
+      echo -e "$errors" | printf_readline
       __printf_color "$YELLOW" "Log file saved to $BUILD_LOG_FILE"
       exitCode=1
     else
@@ -164,19 +164,12 @@ __init() {
 __logr() { echo -e "$*" | tee -a "$BUILD_LOG_FILE" &>/dev/null; }
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 __printf_color() { echo -e "\t\t${1:-}${2:-}${NC}"; }
-printf_readline() {
-  set -o pipefail
-  while read line; do
-    printf '%s\n' "$line"
-  done |& tee
-  set +o pipefail
-}
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 printf_readline() {
+  local color="$1"
   set -o pipefail
-  test -n "$1" && test -z "${1//[0-9]/}" && local color="$1" && shift 1 || local color="6"
   while read line; do
-    printf_color "$color" "$line"
+    echo -e "${color:-$WHITE}$line"
   done |& tee
   set +o pipefail
 }
