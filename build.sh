@@ -107,7 +107,7 @@ __check_log() {
     fi
     if [[ -n "$errors" ]] || [[ "$exitCode" -ne 0 ]]; then
       __printf_color "$RED" "The following errors have occurred:"
-      echo -e "$errors"
+      echo -e "$errors" | printf_readline "7"
       __printf_color "$YELLOW" "Log file saved to $BUILD_LOG_FILE"
       exitCode=1
     else
