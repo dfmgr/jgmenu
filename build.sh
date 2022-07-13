@@ -147,7 +147,8 @@ __packages() {
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 __init() {
   if [[ -z "$BUILD_FORCE" ]] && [[ -f "$(builtin type -P "$BUILD_NAME" 2>/dev/null)" ]]; then
-    __printf_color "$RED" "$BUILD_NAME is already installed" 1>&2
+    __printf_color "$RED" "$BUILD_NAME is already installed at:" 1>&2
+    __printf_color "$GREEN" "$(builtin type -P "$BUILD_NAME" 2>/dev/null)"
     __printf_color "$YELLOW" "run with --force to rebuild" 1>&2
     exit 0
   fi
