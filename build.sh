@@ -18,11 +18,13 @@ VERSION="202207042115-git"
 USER="${SUDO_USER:-${USER}}"
 HOME="${USER_HOME:-${HOME}}"
 SRC_DIR="${BASH_SOURCE%/*}"
+PATH="$(echo "$PATH" | sed 's|:.||g')"
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Set bash options
 if [[ "$1" == "--debug" ]]; then shift 1 && set -xo pipefail && export SCRIPT_OPTS="--debug" && export _DEBUG="on"; fi
 trap 'exitCode=${exitCode:-$?};[ -n "$BUILD_SH_TEMP_FILE" ] && [ -f "$BUILD_SH_TEMP_FILE" ] && rm -Rf "$BUILD_SH_TEMP_FILE" &>/dev/null;exit ${exitCode:-$?}' EXIT
 set -Eo pipefail
+
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Setup build function
 __make_build() {
