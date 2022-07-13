@@ -151,6 +151,7 @@ run_postinst() {
 #
 execute "run_postinst" "Running post install scripts"
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# run any build scripts
 if ! cmd_exists "$APPNAME" && [[ -f "$INSTDIR/build.sh" ]]; then
   if builtin cd "$PLUGDIR/source"; then
     BUILD_SRC_DIR="$PLUGDIR/source"
