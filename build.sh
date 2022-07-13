@@ -34,7 +34,7 @@ __make_build() {
     mkdir -p "$BUILD_SRC_DIR/build" && cd "$BUILD_SRC_DIR/build" || exit 10
     cmake .. 2>&1 | tee -a "$BUILD_LOG_FILE" &>/dev/null || exitCode+=1
     make -j$(nproc) 2>&1 | tee -a "$BUILD_LOG_FILE" &>/dev/null || exitCode+=1
-    sudo make install 2>&1 | tee -a "$BUILD_LOG_FILE" &>/dev/null || exitCode+=1
+    sudo make install DESTDIR="$BUILD_DESTDIR" 2>&1 | tee -a "$BUILD_LOG_FILE" &>/dev/null || exitCode+=1
     exitCode_cmake="$?"
   elif [[ -f "$BUILD_SRC_DIR/configure" ]]; then
     __printf_color "$GREEN" "Running configure"
@@ -48,7 +48,8 @@ __make_build() {
     if [[ -f "$BUILD_SRC_DIR/Makefile" ]]; then
       __printf_color "$GREEN" "Running make"
       make -j$(nproc) 2>&1 | tee -a "$BUILD_LOG_FILE" &>/dev/null || exitCode+=1
-      sudo make install DESTDIR="$BUILD_DESTDIR" 2>&1 | tee -a "$BUILD_LOG_FILE" &>/dev/null
+      sudo make 2>&1 | tee -a "$BUILD_LOG_FILE" &>/dev/null &&
+        sudo make install
       exitCode_make="$?"
     fi
   elif [[ -f "$BUILD_SRC_DIR/Makefile" ]]; then
