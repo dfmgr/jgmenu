@@ -153,6 +153,7 @@ __init() {
     __printf_color "$RED" "$BUILD_NAME is already installed at:" 1>&2
     __printf_color "$GREEN" "$(builtin type -P "$BUILD_NAME" 2>/dev/null)"
     __printf_color "$YELLOW" "run with --force to rebuild" 1>&2
+    exitCode="0"
     exit 0
   fi
   __printf_color "$PURPLE" "Initializing build script for $BUILD_NAME"
