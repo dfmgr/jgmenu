@@ -101,7 +101,7 @@ __check_log() {
     warnings="$(grep -i 'warning: ' "$BUILD_LOG_FILE" || echo '')"
     if [[ -n "$warnings" ]]; then
       __printf_color "$RED" "The following warnings have occurred:"
-      echo -e "$warnings"
+      echo -e "$warnings" | printf_readline "7"
       __printf_color "$YELLOW" "Log file saved to $BUILD_LOG_FILE"
       exitCode=0
     fi
